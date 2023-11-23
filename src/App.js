@@ -1,44 +1,44 @@
 import './App.css';
-
-import Navbar from './Components/Navbar/Navbar';
-import Footer from './Components/Footer/Footer';
 import Login from './Pages/Login/Login';
 import About from './Pages/About/About';
 
 import {
   createBrowserRouter,
-  Outlet,
   RouterProvider,
 } from "react-router-dom";
 
-import { Children } from 'react';
 import Home from './Pages/Home/Home';
+import RootLayOut from './Layouts/RootLayOut';
+import LoginLayout from './Layouts/LoginLayout';
+import SignUp from './Pages/SignUp/SignUp';
 
 
-const Layout = () => {
-  return (
-    <div>
-      <Navbar/>
-      <Outlet/>
-      <Footer/>
-    </div>
-  )
-}
+
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element : <Layout/>,
-
+    element : <RootLayOut/>,
     children : [
     {
       path:"/",
       element: <Home/>
     },
+
     {
-      path:"/login",
-      element:<Login/>
+      element:<LoginLayout/>,
+      children : [
+        {
+          path : "/login",
+          element:<Login/>,
+        },
+        {
+          path : "/signup",
+          element: <SignUp/>
+        },
+      ],
     },
+
     {
       path:"/about",
       element : <About/>

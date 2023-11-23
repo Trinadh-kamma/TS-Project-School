@@ -1,5 +1,150 @@
+.mobile-footer-container {
+	position:fixed;
+	bottom:0;
+	left:0;
+	right:0;
+	border-top:1px solid rgb(179, 178, 178);
+	background-color: #ffffff;
+}
+
 .footer {
-    position: absolute;
-    left:0;
-    bottom:0;
+	display:flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	padding:0.4rem;
+	margin:0.2rem 1rem;
+}
+
+.footer-img {
+	height:23px;
+	width:23px;
+}
+
+.footer-icons {
+	display:flex;
+	flex-direction: column;
+	align-items: center; 
+}
+
+.footer-icons h4 {
+	margin:0.2rem 0rem ;
+	font-size:12px;
+	font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	color:#ffffff;
+	font-weight:bolder;
+}
+
+
+
+@media screen and (max-width:400px) {
+	.footer {
+		margin:0.2rem 0.4rem;
+	}
+	.footer-img {
+		height:20px;
+		width:20px;
+	}
+}
+
+@media screen and (min-width:450px) {
+	.footer {
+		justify-content: space-around;
+	}
+}
+@media screen and (min-width:769px) {
+	.mobile-footer-container {
+		display:none;
+	}
+}
+
+.main-footer-container {  
+	background-color: #101123;
+	background-size: cover;
+	display:flex;
+	flex-direction: column;
+	align-items: center;
+	padding:0.5rem; 
+	margin-top:1rem; 
+}
+
+@media screen and (max-width:768px) {
+	.main-footer-container {
+		display:none;
+	}
+}
+
+.main-footer {
+	width:95%;
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 80px;
+	padding:2rem;
+}
+.each-section-details {
+	display:flex;
+	flex-direction: column;
+	padding:1rem;
+}
+
+.each-section-details h3 {
+	font-size:1rem;
+	margin:0rem;
+	color:#727070;
+}
+
+.list-items {
+	display:flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	padding:0.1rem;
+}
+
+.each-section-details ul li {
+	color:#ccc;
+	list-style-type: none;
+	font-size:0.85rem;
+	margin:0.2rem 0rem; 
+}
+
+.each-section-details ul li:hover {
+	text-decoration: underline;
+	cursor:pointer;
+}
+
+.hr-line {
+	width:100%;
+}
+
+.footer_payment-details {
+	display:flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+	width:90%;
+	margin:2rem 0rem;
+}
+.footer_payment-details div {
+	display:flex;
+	align-items:center;
+}
+
+.footer_payment-details div h1 {
+	margin-right:2rem;
+	color:beige;
+}
+
+.footer_payment-details div p {
+	color:#727070;
+	font-weight:bold;
+	font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.footer_payment-details img {
+	height:60px;
+	width:500px;
+	margin-left:4rem;
 }
