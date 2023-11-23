@@ -6,6 +6,7 @@ import "./Login.css";
 import students from "../../assets/students.jpg"
 import {motion} from "framer-motion"
 import { Link } from 'react-router-dom';
+import LoginService from '../../Services/LoginService';
 
 const EMAIL_REGEX =  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 const USER_REGEX = /^[A-z][A-z0-9-_]{5,24}$/;
@@ -19,17 +20,12 @@ const [email, setEmail] = useState("");
 const [validEmail, setValidEmail] = useState(false);
 const [emailFocus, setEmailFocus] = useState(false)
 
-const [user, setUser] = useState("")
-const [validUser, setValidUser] = useState(false)
-const [userFocus, setUserFocus] = useState(false)
+
 
 const [password, setPassword] = useState("")
 const [validPassword, setValidPassword] = useState(false)
 const [passwordFocus, setPasswordFocus] = useState(false)
 
-const [matchPassword, setMatchPassword] = useState("")
-const [validMatch, setValidMatch] = useState(false)
-const [matchFocus, setMatchFocus] = useState(false)
 
 const [errMsg, setErrMsg] = useState("")
 const [success, setSuccess] = useState(false)
@@ -43,29 +39,33 @@ useEffect(() => {
 }, [email])
 
 useEffect(() => {
-  setValidUser(USER_REGEX.test(user))
-  
-}, [user])
-
-useEffect(() => {
   setValidPassword(PASSWORD_REGEX.test(password))
-  setValidMatch(password === matchPassword)
-}, [password, matchPassword])
+}, [password]);
+
 
 const handleSubmit = (e) => {
   e.preventDefault();
   // To avoid javascript hack
   const v1 = EMAIL_REGEX.test(email)
-  const v2 = USER_REGEX.test(user)
   const v3 = PASSWORD_REGEX.test(password)
 
-  if (!v1 || !v2 || !v3) {
+  if (!v1  || !v3) {
     setErrMsg("Invalid Entry")
     return; 
   }
-  console.log(email, user, password);
+  console.log(email, password);
   setSuccess(true);
   
+}
+
+const handleLogin = () => {
+  LoginService.getLoginCreds()
+  .then((response) => {
+    console.log(response.data)
+  })
+  .catch((error) => {
+    console.log(error);
+  })
 }
 
   return (
@@ -148,7 +148,9 @@ const handleSubmit = (e) => {
           </p>
           
 
-          <button disabled={!validEmail ||  !validPassword ? true : false}>Log in</button>
+          <button disabled={!validEmail ||  !validPassword ? true : false}
+          onClick={handleLogin}
+          >Log in</button>
         </form>
         <div className='or'>
           OR

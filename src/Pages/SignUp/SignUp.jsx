@@ -6,6 +6,7 @@ import "./SignUp.css";
 import students from "../../assets/students.jpg"
 import {motion} from "framer-motion"
 import { Link } from 'react-router-dom';
+import LoginService from '../../Services/LoginService';
 
 const EMAIL_REGEX =  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 const USER_REGEX = /^[A-z][A-z0-9-_]{5,24}$/;
@@ -15,9 +16,22 @@ const SignUp = () => {
 	const emailRef = useRef();
 	const errRef = useRef();
 
+
+	const [loginCreds, setLoginCreds] = useState({
+		id:"",
+		email:"",
+		username: "",
+		password:"",
+	});
+
+
+	const handleChange = (field, value) => {
+		setLoginCreds((prevLoginCreds) => ({...prevLoginCreds, [field] : value}))
+	}
+
 const [email, setEmail] = useState("");
 const [validEmail, setValidEmail] = useState(false);
-const [emailFocus, setEmailFocus] = useState(false)
+const [emailFocus, setEmailFocus] = useState(false);
 
 const [user, setUser] = useState("")
 const [validUser, setValidUser] = useState(false)
@@ -39,31 +53,39 @@ useEffect(() => {
 }, [])
 
 useEffect(() => {
-	setValidEmail(EMAIL_REGEX.test(email))
-}, [email])
+	setValidEmail(EMAIL_REGEX.test(loginCreds.email))
+}, [loginCreds.email])
 
 useEffect(() => {
-	setValidUser(USER_REGEX.test(user))
+	setValidUser(USER_REGEX.test(loginCreds.username))
 	
-}, [user])
+}, [loginCreds.username])
 
 useEffect(() => {
-	setValidPassword(PASSWORD_REGEX.test(password))
-	setValidMatch(password === matchPassword)
-}, [password, matchPassword])
+	setValidPassword(PASSWORD_REGEX.test(loginCreds.password))
+	setValidMatch(loginCreds.password === matchPassword)
+}, [loginCreds.password, matchPassword])
 
 const handleSubmit = (e) => {
 	e.preventDefault();
 	// To avoid javascript hack
-	const v1 = EMAIL_REGEX.test(email)
-	const v2 = USER_REGEX.test(user)
-	const v3 = PASSWORD_REGEX.test(password)
+	const v1 = EMAIL_REGEX.test(loginCreds.email)
+	const  v2 = USER_REGEX.test(loginCreds.username)
+	const v3 = PASSWORD_REGEX.test(loginCreds.password)
 
 	if (!v1 || !v2 || !v3) {
 		setErrMsg("Invalid Entry")
 		return;
 	}
-	console.log(email, user, password);
+
+	LoginService.saveLoginCreds(loginCreds)
+	.then((response) => {
+		console.log(response);
+	}) 
+	.catch((error) => {
+		console.log(error);
+	})
+	console.log(loginCreds.email, loginCreds.username, loginCreds.password);
 	setSuccess(true);
 	
 }
@@ -78,7 +100,7 @@ const handleSubmit = (e) => {
 			<section>
 				<h1>Success !!!</h1>
 				<p>
-					<a href="#">Sign In</a>
+					<Link href="#">Sign In</Link>
 				</p>
 			</section>
 			) : (
@@ -91,9 +113,10 @@ const handleSubmit = (e) => {
 				<h1 style={{textAlign:'center'}} className="auth">Create an Account</h1>
 				<form onSubmit={handleSubmit}>
 
-				<label htmlFor="email">Email:
-				<FontAwesomeIcon icon={faCheck} className={validEmail ? "valid" : "hide"}/>
-				<FontAwesomeIcon icon={faTimes} className={validEmail || !email? "hide" : "invalid"}/>
+
+					<label htmlFor="email">Email:
+						<FontAwesomeIcon icon={faCheck} className={validEmail ? "valid" : "hide"}/>
+						<FontAwesomeIcon icon={faTimes} className={validEmail || !loginCreds.email? "hide" : "invalid"}/>
 					</label>
 					<div className="input-wrapper">
 						<input 
@@ -101,8 +124,8 @@ const handleSubmit = (e) => {
 							type="text" 
 							placeholder="test@gmail.com"
 							ref={emailRef}
-							onChange={(e) => setEmail(e.target.value)}
-							value={email}
+							onChange={(e) => handleChange('email', e.target.value)}
+							value={loginCreds.email}
 							onFocus={() => setEmailFocus(true)}
 							onBlur={() => setEmailFocus(false)}
 							aria-invalid={"false"}
@@ -113,7 +136,7 @@ const handleSubmit = (e) => {
 						<FontAwesomeIcon icon={faEnvelope} className="envelope"/>
 					</div>
 
-					<p id="emailnote" className={emailFocus && email && !validEmail?  "suggestion" : "offscreen"}>
+					<p id="emailnote" className={emailFocus && loginCreds.email && !validEmail?  "suggestion" : "offscreen"}>
 						<FontAwesomeIcon icon={faInfoCircle}/>
 						Must Include @character <br/>
 						Special characters like <br/> ! # $ % & ' - / = ? ^ _ `| ~ are allowed <br/>
@@ -121,16 +144,17 @@ const handleSubmit = (e) => {
 					</p>
 
 
+
 					<label htmlFor="username">Username:
 					<FontAwesomeIcon icon={faCheck} className={validUser ? "valid" : "hide"}/>
-					<FontAwesomeIcon icon={faTimes} className={validUser || !user? "hide" : "invalid"}/>
+					<FontAwesomeIcon icon={faTimes} className={validUser || !loginCreds.username? "hide" : "invalid"}/>
 					</label>
 					<div className="input-wrapper">
 						<input 
 							id="username"
 							type="text" 
-							onChange={(e) => setUser(e.target.value)}
-							value={user}
+							onChange={(e) => handleChange('username', e.target.value)}
+							value={loginCreds.username}
 							required
 							autoComplete='off'
 							onFocus={() => setUserFocus(true)}
@@ -141,7 +165,7 @@ const handleSubmit = (e) => {
 						<FontAwesomeIcon icon={faUser}/>
 					</div>
 
-					<p id="usernote" className={userFocus && user && !validUser ? "suggestion" : "offscreen"}>
+					<p id="usernote" className={userFocus && loginCreds.username && !validUser ? "suggestion" : "offscreen"}>
 						<FontAwesomeIcon icon={faInfoCircle}/>
 						Must have 6 to 24 characters <br/>
 						Must begin with a letter.<br />
@@ -152,14 +176,14 @@ const handleSubmit = (e) => {
 
 					<label htmlFor="password">Password:
 					<FontAwesomeIcon icon={faCheck} className={validPassword ? "valid" : "hide"}/>
-					<FontAwesomeIcon icon={faTimes} className={validPassword || !password ? "hide" : "invalid"}/>
+					<FontAwesomeIcon icon={faTimes} className={validPassword || !loginCreds.password ? "hide" : "invalid"}/>
 					</label>
 					<div className="input-wrapper">
 						<input 
 						id="password"
 						type="password"
-						onChange={(e) => setPassword(e.target.value)}
-						value={password}
+						onChange={(e) => handleChange('password', e.target.value)}
+						value={loginCreds.password}
 						required
 						onFocus={() => setPasswordFocus(true)}
 						onBlur={() => setPasswordFocus(false)}
@@ -169,12 +193,14 @@ const handleSubmit = (e) => {
 						{validPassword  ? <FontAwesomeIcon icon={faLock} /> : <FontAwesomeIcon icon={faLockOpen}/>}
 					</div>
 
-					<p id="passwordnote" className={passwordFocus && password && !validPassword? "suggestion" : "offscreen"}>
+					<p id="passwordnote" className={passwordFocus && loginCreds.password && !validPassword? "suggestion" : "offscreen"}>
 						<FontAwesomeIcon icon={faInfoCircle}/>
 						8 to 24 characters.<br />
 						Must include uppercase and lowercase letters <br/>, a number and a special character.<br />
 						Allowed special characters: <span aria-label="exclamation mark">!</span> <span aria-label="at symbol">@</span> <span aria-label="hashtag">#</span> <span aria-label="dollar sign">$</span> <span aria-label="percent">%</span>
 					</p>
+
+
 					
 					<label htmlFor="matchPassword">Repeat Password:
 					<FontAwesomeIcon icon={faCheck} className={validMatch && matchPassword ? "valid" : "hide"}/>
@@ -200,7 +226,13 @@ const handleSubmit = (e) => {
 						<FontAwesomeIcon icon={faInfoCircle}/>
 						Must match the above password input field.
 					</p>
-					<button disabled={!validEmail || !validUser || !validPassword || !validMatch ? true : false}>Sign Up</button>
+
+					
+					<button 
+					disabled={!validEmail || !validUser || !validPassword || !validMatch ? true : false} 
+					onClick={handleSubmit}>
+						Sign Up
+					</button>
 				</form>
 		</section>)}
 
